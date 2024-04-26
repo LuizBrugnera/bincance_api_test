@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 CORS(app) 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:123456@localhost:3306/tradewillian'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:12345678@localhost:3306/tradewillian'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'segredo_do_jwt'
 db = SQLAlchemy(app)
