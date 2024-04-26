@@ -192,11 +192,20 @@ def create_bot_api():
 @app.route('/stop-bot', methods=['POST'])
 @jwt_required()
 def stop_bot_api():
-    id = request.json.get('id')
-    bot = bots.get(id)
-    if bot:
-        bot.stop()
-        return jsonify({'message': 'Bot parado com sucesso'}), 200
+    bot_id = request.json.get('id')
+    if not bot_id:
+        return jsonify({'message': 'ID do bot é necessário'}), 400
+
+    db_bot = Bot.query.filter_by(id=bot_id).first()
+    if db_bot:
+        db_bot.status = 'STOPPED'
+        db.session.commit() 
+        bot = bots.get(bot_id)
+        if bot:
+            bot.stop()
+            return jsonify({'message': 'Bot parado com sucesso'}), 200
+        else:
+            return jsonify({'message': 'Instância do bot não encontrada'}), 404
     else:
         return jsonify({'message': 'Bot não encontrado'}), 404
     
