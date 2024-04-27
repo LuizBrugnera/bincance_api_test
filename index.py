@@ -169,11 +169,9 @@ def create_bot_api():
     else:
         buy_percentage = 1
     if(entry_datetime is not None and entry_datetime != ''):
-        print("converteu", entry_datetime)
         entry_datetime = convert_date_to_datetime(entry_datetime)
-        print("converteu", entry_datetime)
+        entry_datetime = convert_sp_to_utc(entry_datetime)
     if(lanc_sell_1 is not None and lanc_sell_1 != ''):
-        print("converteu o lanc_1")
         lanc_sell_1 = float(lanc_sell_1)
     if(lanc_sell_2 is not None and lanc_sell_2 != ''):
         lanc_sell_2 = float(lanc_sell_2)
