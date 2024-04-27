@@ -279,6 +279,8 @@ class TradingBot:
         if(self.strategy == 'LANC'):
             target_time = self.entry_datetime
             while self.running.is_set():
+                print("Data de entrada: ", target_time)
+                print("Data atual: ", datetime.now())
                 if datetime.now() > target_time:
                     strategy_LANC(self)
                 print("Aguardando horário de entrada")
