@@ -144,7 +144,8 @@ def strategy_PRT(self):
 
 def strategy_LANC(self):
     target_time = self.entry_datetime
-    if datetime.now() < target_time:
+    current_time = datetime.now(ZoneInfo("UTC"))
+    if current_time < target_time:
         return
     symbol = self.coin_currency + self.fiat_currency
 
