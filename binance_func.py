@@ -77,8 +77,8 @@ def strategy_PRT(self):
         amount_money_in_fiat = check_balance(self.client, self.fiat_currency)
         coin_current_price = float(self.client.get_symbol_ticker(symbol=symbol)['price'])  
         money = int(self.value)
-        buy_percent = formatPercent(self.buy_percent, 'BUY')
-        sell_percent = formatPercent(self.sell_percent, 'SELL')
+        buy_percent = formatPercent(float(self.buy_percent), 'BUY')
+        sell_percent = formatPercent(float(self.sell_percent), 'SELL')
         if(self.percentage):
             percentaged = money / 100
             money = amount_money_in_fiat * percentaged
@@ -143,12 +143,10 @@ def strategy_PRT(self):
 
 def strategy_LANC(self):
     target_time = self.entry_datetime
+    if datetime.now() < target_time:
+        return
     symbol = self.coin_currency + self.fiat_currency
-    print("target time", target_time)
-    print("datetime now", datetime.now())
-    while datetime.now() < target_time:
-        time.sleep(1) 
-    
+
     self.price = float(self.client.get_symbol_ticker(symbol=symbol)['price'])
     max_price = self.price * (1 + self.skid / 100)
 
@@ -279,14 +277,20 @@ class TradingBot:
                 self.value = self.value * float(self.client.get_symbol_ticker(symbol='USDT' + self.fiat_currency)['price'])
                 
         if(self.strategy == 'LANC'):
+            target_time = self.entry_datetime
+            while self.running.is_set():
+                if datetime.now() > target_time:
+                    strategy_LANC(self)
+                print("Aguardando horário de entrada")
+                time.sleep(1) 
             strategy_LANC(self)
             
         elif self.strategy == 'PRT':
-            if self.price is None:
+            if self.price is None or self.price == '':
                 self.price = float(self.client.get_symbol_ticker(symbol=self.coin_currency + self.fiat_currency)['price'])
-            if(self.buy_percent is None):
+            if(self.buy_percent is None and self.buy_percent == ''):
                 self.buy_percent = 2
-            if(self.sell_percent is None):
+            if(self.sell_percent is None and self.sell_percent == ''):
                 self.sell_percent = 2 
                 
             while self.running.is_set():

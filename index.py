@@ -77,7 +77,7 @@ def convert_sp_to_utc(sp_datetime):
     
 def convert_date_to_datetime(date_str):
     try:
-        return datetime.strptime(date_str, '%d/%m/%Y')
+        return datetime.strptime(date_str, '%d/%m/%Y %H:%M:%S')
     except ValueError as e:
         print(f"Erro: {e}")
         return None
@@ -139,7 +139,7 @@ def create_bot_api():
     coin_currency = request.json.get('coin_currency')
     value = float(request.json.get('value')) # 5 dol
     percentage = bool(request.json.get('percentage'))
-    skid = float(request.json.get('skid'))
+    skid = request.json.get('skid')
     price = request.json.get('price')
     sell_percentage = request.json.get('sell_percentage')
     buy_percentage = request.json.get('buy_percentage')
@@ -152,34 +152,66 @@ def create_bot_api():
     lanc_amount_2 = request.json.get('lanc_amount_2')
     lanc_amount_3 = request.json.get('lanc_amount_3')
     
+    print("entry", entry_datetime)
     
-    if(price is not None):
+    if(price is not None and price != ''):
         price = float(price)
-    if(sell_percentage is not None):
+    else:
+        price = 0
+    if(sell_percentage is not None and sell_percentage != ''):
         sell_percentage = float(sell_percentage)
-    if(buy_percentage is not None):
+    else:
+        sell_percentage = 1
+    if(buy_percentage is not None and buy_percentage != ''):
         buy_percentage = float(buy_percentage)
-    if(entry_datetime is not None):
+    else:
+        buy_percentage = 1
+    if(entry_datetime is not None and entry_datetime != ''):
+        print("converteu", entry_datetime)
         entry_datetime = convert_date_to_datetime(entry_datetime)
-    if(lanc_sell_1 is not None):
+        print("converteu", entry_datetime)
+    if(lanc_sell_1 is not None and lanc_sell_1 != ''):
+        print("converteu o lanc_1")
         lanc_sell_1 = float(lanc_sell_1)
-    if(lanc_sell_2 is not None):
+    if(lanc_sell_2 is not None and lanc_sell_2 != ''):
         lanc_sell_2 = float(lanc_sell_2)
-    if(lanc_sell_3 is not None):
+    if(lanc_sell_3 is not None and lanc_sell_3 != ''):
         lanc_sell_3 = float(lanc_sell_3)
-    if(lanc_amount_1 is not None):
+    if(lanc_amount_1 is not None and lanc_amount_1 != ''):
         lanc_amount_1 = float(lanc_amount_1)
-    if(lanc_amount_2 is not None):
+    if(lanc_amount_2 is not None and lanc_amount_2 != ''):
         lanc_amount_2 = float(lanc_amount_2)
-    if(lanc_amount_3 is not None):
+    if(lanc_amount_3 is not None and lanc_amount_3 != ''):
         lanc_amount_3 = float(lanc_amount_3)
-        
-    if not api_key or not api_secret or not fiat_currency or not coin_currency or not value or not skid:
+    if(skid is not None ):
+        skid = float(skid)
+    
+    if not api_key or not api_secret or not fiat_currency or not coin_currency or not value:
         return jsonify({'message': 'Dados incompletos'}), 400
 
-    bot = Bot(user_id=user.id, fiat_currency=fiat_currency, coin_currency=coin_currency, value=value, percentage=percentage, skid=skid, strategy='PRT', purchased=False, price=price, status='RUNNING', sell_percentage=sell_percentage, buy_percentage=buy_percentage, entry_datetime=entry_datetime, lanc_sell_1=lanc_sell_1, lanc_sell_2=lanc_sell_2, lanc_sell_3=lanc_sell_3, lanc_amount_1=lanc_amount_1, lanc_amount_2=lanc_amount_2, lanc_amount_3=lanc_amount_3)
+    bot = Bot(user_id=user.id, fiat_currency=fiat_currency, coin_currency=coin_currency, value=value, percentage=percentage, skid=skid, strategy=strategy, purchased=False, price=price, status='RUNNING', sell_percentage=sell_percentage, buy_percentage=buy_percentage, entry_datetime=entry_datetime, lanc_sell_1=lanc_sell_1, lanc_sell_2=lanc_sell_2, lanc_sell_3=lanc_sell_3, lanc_amount_1=lanc_amount_1, lanc_amount_2=lanc_amount_2, lanc_amount_3=lanc_amount_3)
     db.session.add(bot)
     db.session.commit()
+    print("entry", entry_datetime)
+    print("lanc_sell_1", lanc_sell_1)
+    print("lanc_sell_2", lanc_sell_2)
+    print("lanc_sell_3", lanc_sell_3)
+    print("lanc_amount_1", lanc_amount_1)
+    print("lanc_amount_2", lanc_amount_2)
+    print("lanc_amount_3", lanc_amount_3)
+    print("price", price)
+    print("sell_percentage", sell_percentage)
+    print("buy_percentage", buy_percentage)
+    print("skid", skid)
+    print("strategy", strategy)
+    print("entry_datetime", entry_datetime)
+    print("fiat_currency", fiat_currency)
+    print("coin_currency", coin_currency)
+    print("value", value)
+    print("percentage", percentage)
+    print("api_key", api_key)
+    print("api_secret", api_secret)
+    print("bot.id", bot.id)
     
     trading_bot = TradingBot(bot.id, app, db, BotHistoric, api_key, api_secret, fiat_currency, coin_currency, value, percentage,price, skid,strategy, entry_datetime, buy_percentage, sell_percentage, lanc_sell_1, lanc_sell_2, lanc_sell_3, lanc_amount_1, lanc_amount_2, lanc_amount_3)
     
@@ -193,6 +225,7 @@ def create_bot_api():
 @jwt_required()
 def stop_bot_api():
     bot_id = request.json.get('id')
+    print(bot_id)
     if not bot_id:
         return jsonify({'message': 'ID do bot é necessário'}), 400
 
@@ -300,7 +333,7 @@ def bot_historic_api():
 #if __name__ == '__main__':
 #    with app.app_context():
 #        db.create_all()
-
+#
 #    app.run(debug=True)
     
     
