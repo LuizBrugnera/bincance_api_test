@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import time
 from binance.client import Client
 from binance.enums import *
+from zoneinfo import ZoneInfo
 
 def check_balance(client, currency):
     balance = client.get_asset_balance(asset=currency)
@@ -281,7 +282,8 @@ class TradingBot:
             while self.running.is_set():
                 print("Data de entrada: ", target_time)
                 print("Data atual: ", datetime.now())
-                if datetime.now() > target_time:
+                current_time = datetime.now(ZoneInfo("UTC"))
+                if current_time > target_time:
                     strategy_LANC(self)
                 print("Aguardando horário de entrada")
                 time.sleep(1) 
