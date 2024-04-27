@@ -87,6 +87,8 @@ def signup():
     name = request.json.get('name')
     email = request.json.get('email')
     password = request.json.get('password')
+    api_key = request.json.get('api_key')
+    api_secret = request.json.get('api_secret')
     
     if not name or not email or not password:
         return jsonify({'message': 'Dados incompletos'}), 400
@@ -94,7 +96,7 @@ def signup():
     if User.query.filter_by(email=email).first():
         return jsonify({'message': 'Email já cadastrado'}), 400
 
-    user = User(name=name, email=email, password=generate_password_hash(password))
+    user = User(name=name, email=email, password=generate_password_hash(password), api_key=api_key, api_secret=api_secret)
     db.session.add(user)
     db.session.commit()
 
