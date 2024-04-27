@@ -187,6 +187,8 @@ def create_bot_api():
         lanc_amount_3 = float(lanc_amount_3)
     if(skid is not None ):
         skid = float(skid)
+    else :
+        skid = 0
     
     if not api_key or not api_secret or not fiat_currency or not coin_currency or not value:
         return jsonify({'message': 'Dados incompletos'}), 400
