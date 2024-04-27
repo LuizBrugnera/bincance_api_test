@@ -185,7 +185,7 @@ def create_bot_api():
         lanc_amount_2 = float(lanc_amount_2)
     if(lanc_amount_3 is not None and lanc_amount_3 != ''):
         lanc_amount_3 = float(lanc_amount_3)
-    if(skid is not None ):
+    if(skid is not None and skid != ''):
         skid = float(skid)
     else :
         skid = 0
