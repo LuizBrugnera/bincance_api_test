@@ -43,9 +43,10 @@ def fetch_portfolio(api_key, api_secret):
     try:
         account_info = client.get_account()
         balances = account_info['balances']
+        print(balances)
 
         price_usdt_in_brl = float(client.get_symbol_ticker(symbol='USDTBRL')['price'])
-
+        
         portfolio = {}
         for balance in balances:
             asset = balance['asset']
